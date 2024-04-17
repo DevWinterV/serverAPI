@@ -27,6 +27,23 @@ class FoodListController extends Controller
         return BaseResponse::success($foodbyId, "Food found successfully", statuscode: Response::HTTP_OK);
     }
 
+
+    public function search($keyword)
+    {
+       // Tìm kiếm trong các trường FoodName, UploadImage và Description
+        $foodlist = FoodList::where([
+            '$or' => [
+                ['FoodName' => ['$regex' => $keyword, '$options' => 'i']],
+                ['UploadImage' => ['$regex' => $keyword, '$options' => 'i']],
+                ['Description' => ['$regex' => $keyword, '$options' => 'i']]
+            ]
+        ])
+        ->get()
+        ->toArray();
+
+        return BaseResponse::success($foodlist, "Search successfully", statuscode: Response::HTTP_OK);
+    }
+
     public function store(Request $request)
     {
         // Tạo một bản ghi mới của FoodList và gán các giá trị từ request
